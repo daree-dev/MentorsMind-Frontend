@@ -278,6 +278,8 @@ export interface RecentlyViewedMentor {
   mentorId: string;
   viewedAt: string;
   mentor: MentorProfile;
+}
+
 export type UserRole = 'mentor' | 'learner' | 'admin';
 
 export interface User {
@@ -303,5 +305,12 @@ export type {
   MentorInteraction,
   SessionFrequencyData,
   LearningVelocityData,
-  SpendingAnalytics
+  SpendingAnalytics,
+  BookingSessionType,
+  AvailabilitySlot,
+  BookingDraft,
+  BookingPricingBreakdown,
+  CalendarInvite,
+  LearnerCalendarEvent,
+  BookingConfirmationDetails
 } from './session.types';
