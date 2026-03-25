@@ -15,6 +15,9 @@ const loadLearnerOnboarding = () => import('./pages/LearnerOnboarding');
 const loadMentorWallet = () => import('./pages/MentorWallet');
 const loadMentorSearch = () => import('./pages/MentorSearch');
 const loadMentorSessions = () => import('./pages/MentorSessions');
+const loadSettings = () => import('./pages/Settings');
+const loadMentorProfileSetup = () => import('./pages/MentorProfileSetup');
+const loadLearningGoals = () => import('./pages/LearningGoals');
 const loadRatingBreakdown = () => import('./components/reviews/RatingBreakdown');
 const loadReviewForm = () => import('./components/reviews/ReviewForm');
 const loadReviewList = () => import('./components/reviews/ReviewList');
@@ -28,6 +31,10 @@ const LearnerOnboarding = lazy(loadLearnerOnboarding);
 const MentorWallet = lazy(loadMentorWallet);
 const MentorSearch = lazy(loadMentorSearch);
 const MentorSessions = lazy(loadMentorSessions);
+const Settings = lazy(loadSettings);
+const MentorProfileSetup = lazy(() => loadMentorProfileSetup().then(m => ({ default: m.MentorProfileSetup })));
+const LearningGoals = lazy(loadLearningGoals);
+const MentorDashboard = lazy(() => import('./pages/MentorDashboard'));
 const RatingBreakdown = lazy(loadRatingBreakdown);
 const ReviewForm = lazy(loadReviewForm);
 const ReviewList = lazy(loadReviewList);
@@ -36,7 +43,7 @@ const BarChart = lazy(loadBarChart);
 const PieChart = lazy(loadPieChart);
 const AreaChart = lazy(loadAreaChart);
 
-type AppView = 'onboarding' | 'learner' | 'wallet' | 'search' | 'reviews' | 'analytics' | 'profile' | 'sessions';
+type AppView = 'onboarding' | 'learner' | 'wallet' | 'search' | 'reviews' | 'analytics' | 'profile' | 'sessions' | 'settings' | 'goals' | 'dashboard';
 
 const earningsData = [
   { label: 'Jan', earnings: 1200, sessions: 8 },
@@ -167,11 +174,14 @@ function App() {
     search: loadMentorSearch,
     learner: loadLearnerOnboarding,
     onboarding: loadMentorOnboarding,
-    profile: loadMentorOnboarding,
+    profile: loadMentorProfileSetup,
     wallet: loadMentorWallet,
     analytics: loadAreaChart,
     reviews: loadReviewList,
     sessions: loadMentorSessions,
+    settings: loadSettings,
+    goals: loadLearningGoals,
+    dashboard: () => Promise.resolve(), // Assuming static or handled elsewhere
   };
 
   return (
@@ -251,12 +261,28 @@ function App() {
               Profile Setup
             </button>
             <button
-              onClick={() => setView('search')}
+              onClick={() => handleViewChange('search', 'Search & Discovery')}
               className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
                 view === 'search' ? 'bg-white shadow-sm text-stellar' : 'text-gray-400 hover:text-gray-600'
               }`}
             >
               Search & Discovery
+            </button>
+            <button
+              onClick={() => handleViewChange('sessions', 'Manage Sessions')}
+              className={`px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap ${
+                view === 'sessions' ? 'bg-white shadow-sm text-stellar' : 'text-gray-400 hover:text-gray-600'
+              }`}
+            >
+              Manage Sessions
+            </button>
+            <button
+              onClick={() => handleViewChange('settings', 'Settings')}
+              className={`px-4 py-2 rounded-lg text-sm font-bold transition-all whitespace-nowrap ${
+                view === 'settings' ? 'bg-white shadow-sm text-stellar' : 'text-gray-400 hover:text-gray-600'
+              }`}
+            >
+              Settings
             </button>
           </div>
 
@@ -268,6 +294,7 @@ function App() {
               { id: 'sessions', label: 'Manage Sessions' },
               { id: 'profile', label: 'Profile Setup' },
               { id: 'wallet', label: 'Wallet' },
+              { id: 'settings', label: 'Settings' },
               { id: 'analytics', label: 'Analytics' },
               { id: 'reviews', label: 'Reviews' },
             ].map((item: { id: string; label: string }) => (
@@ -308,7 +335,9 @@ function App() {
       {/* Main content area */}
       <main id="main-content" tabIndex={-1} className="max-w-7xl mx-auto px-4 pt-10 outline-none">
         <Suspense fallback={<div className="flex h-64 items-center justify-center">Loading...</div>}>
-          {view === 'onboarding' ? (
+          {view === 'settings' ? (
+            <Settings />
+          ) : view === 'onboarding' ? (
             <MentorOnboarding />
           ) : view === 'learner' ? (
             <LearnerOnboarding />
@@ -324,6 +353,8 @@ function App() {
             <MentorSearch isOnline={isOnline} />
           ) : view === 'analytics' ? (
             <AnalyticsDashboard />
+          ) : view === 'dashboard' ? (
+            <MentorDashboard />
           ) : (
           <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex justify-between items-end">
