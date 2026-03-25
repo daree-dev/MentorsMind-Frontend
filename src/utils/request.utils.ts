@@ -1,6 +1,6 @@
 import type { AxiosRequestConfig } from "axios";
-import api from "./api.client";
-import { getCached, setCache } from "./cache";
+import api from "../services/api.client";
+import { getCached, setCache } from "./cache.utils";
 
 export const request = async <T>(
   config: AxiosRequestConfig,
@@ -21,7 +21,7 @@ export const request = async <T>(
   }
 
   const res = await api(config);
-  
+
   if (opts?.useCache) {
     setCache(key, res.data);
   }
