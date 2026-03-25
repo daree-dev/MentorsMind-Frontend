@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import * as requestModule from "../../utils/request.utils";
 import AuthService from "../auth.service";
-import * as requestModule from "../request";
 
 describe("authService", () => {
   let authService: AuthService;
