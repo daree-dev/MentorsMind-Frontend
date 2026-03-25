@@ -1,9 +1,11 @@
 import React from 'react';
 import { useReminders } from '../hooks/useReminders';
+import { useRecommendations } from '../hooks/useRecommendations';
 import ReminderSettings from '../components/learner/ReminderSettings';
 import UpcomingReminders from '../components/learner/UpcomingReminders';
 import LearningRecommendations from '../components/learner/LearningRecommendations';
 import SessionPrep from '../components/learner/SessionPrep';
+import RecommendedMentors from '../components/learner/RecommendedMentors';
 import type { Session } from '../types';
 
 // Mock sessions for demonstration
@@ -34,16 +36,25 @@ const MOCK_SESSIONS: Session[] = [
 ];
 
 const LearnerDashboard: React.FC = () => {
-  const { 
-    settings, 
-    upcomingReminders, 
-    history, 
-    updateSettings, 
-    snoozeReminder, 
+  const {
+    settings,
+    upcomingReminders,
+    history,
+    updateSettings,
+    snoozeReminder,
     dismissReminder,
     addCustomTime,
     removeCustomTime
   } = useReminders(MOCK_SESSIONS);
+
+  const {
+    mentors,
+    isLoading: isLoadingRecommendations,
+    toggleMentorBookmark,
+    setMentorFeedback,
+    dismissMentor,
+    refreshRecommendations,
+  } = useRecommendations();
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8 space-y-12 animate-in fade-in duration-700">
@@ -90,6 +101,28 @@ const LearnerDashboard: React.FC = () => {
           />
         </div>
       </div>
+
+      <section>
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-2xl font-bold text-gray-900">Recommended for you</h2>
+            <p className="text-gray-500 text-sm mt-1">Personalized mentor suggestions based on your goals</p>
+          </div>
+          <button
+            onClick={refreshRecommendations}
+            className="px-4 py-2 text-sm font-medium text-stellar hover:bg-stellar/10 rounded-lg transition-colors"
+          >
+            Refresh
+          </button>
+        </div>
+        <RecommendedMentors
+          mentors={mentors}
+          onBookmark={toggleMentorBookmark}
+          onFeedback={setMentorFeedback}
+          onDismiss={dismissMentor}
+          isLoading={isLoadingRecommendations}
+        />
+      </section>
 
       <LearningRecommendations />
       <SessionPrep />
