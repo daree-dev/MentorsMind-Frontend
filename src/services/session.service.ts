@@ -19,5 +19,15 @@ export default class SessionService {
       true,
     );
   }
-  
+
+  async getSessions(args: Record<string, unknown>) {
+    return request<{ status: string }>(
+      {
+        method: "GET",
+        url: "/sessions",
+        data: { args },
+      },
+      true,
+    );
+  }
 }
